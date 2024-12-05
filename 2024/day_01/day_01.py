@@ -23,6 +23,17 @@ def intersection(list1, list2):
 # %%
 def part1(txt):
     arr = np.array([x.split() for x in txt]).astype(np.int32)
+
+    return np.sum(np.abs(np.sort(arr[:,0])-np.sort(arr[:,1])))
+
+    
+
+print(f"Part 1 (test): {part1(test_txt)}")
+print(f"Part 1: {part1(input_txt)}")
+
+# %%
+def part2(txt):
+    arr = np.array([x.split() for x in txt]).astype(np.int32)
     freqs1={}
     for num in arr[:,0]:
         freqs1[num] = freqs1.get(num, 0) +1
@@ -36,15 +47,6 @@ def part1(txt):
         outlist.append(x*freqs1[x]*freqs2[x])
 
     return np.sum(outlist)
-
-    
-
-print(f"Part 1 (test): {part1(test_txt)}")
-print(f"Part 1: {part1(input_txt)}")
-
-# %%
-def part2(txt):
-    return None
 
 print(f"Part 2 (test): {part2(test_txt)}")
 print(f"Part 2: {part2(input_txt)}")

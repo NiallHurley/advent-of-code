@@ -13,14 +13,14 @@ with open(f"day_{daynum}_input.txt", "r") as f:
 
 # %%
 def part1(txt):
-    return     
+    return None    
 
 print(f"Part 1 (test): {part1(test_txt)}")
 print(f"Part 1: {part1(input_txt)}")
 
 # %%
 def part2(txt):
-    return 0
+    return None
 
 print(f"Part 2 (test): {part2(test_txt)}")
 print(f"Part 2: {part2(input_txt)}")

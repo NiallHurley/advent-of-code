@@ -1,6 +1,7 @@
 #%%
 daynum = ""
 import numpy as np
+from tqdm.autonotebook import tqdm
 
 with open(f"day_{daynum}_test_input.txt", "r") as f:
     test_txt = [line.strip() for line in f.readlines()]

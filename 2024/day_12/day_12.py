@@ -216,6 +216,68 @@ print(f"Part 1 (test): {part1(test_txt)}")
 print(f"Part 1: {part1(input_txt)}")
 
 # %%
+
+# PART 2 functions
+
+def get_boundary_list(l1):
+    perim = 0
+    boundary_list = []
+    for (r, c) in l1:
+        for dr, dc in dirs:
+            neighbor = (r + dr, c + dc)
+            if neighbor not in l1:
+                perim += 1
+                boundary_list.append((r,c, dr,dc))
+    return boundary_list
+
+def count_edges_in_boundary_list(boundary_list):
+    boundary_list = set(boundary_list)
+    visited = set()
+    edges = 0
+    for (r, c,dr,dc) in boundary_list:
+        if (r, c,dr,dc) in visited:
+            continue
+        else:
+            visited.add((r, c,dr,dc))
+            edges+=1
+            if dc == 0:   # then boundary is to the north or south     
+                # check horizontally right
+                i = 0 
+                while True:
+                    i = i+1
+                    if (r,c+i,dr,dc) in boundary_list and (r,c+i,dr,dc) not in visited:
+                        visited.add((r,c+i,dr,dc))
+                    else:
+                        break
+                # check horizontally left
+                i = 0 
+                while True:
+                    i = i-1
+                    if (r,c+i,dr,dc) in boundary_list and (r,c+i,dr,dc) not in visited:
+                        visited.add((r,c+i,dr,dc))
+                    else:
+                        break
+            else:
+                 # check vertically down
+                i = 0 
+                while True:
+                    i = i+1
+                    if (r+i,c,dr,dc) in boundary_list and (r+i,c,dr,dc) not in visited:
+                        visited.add((r+i,c,dr,dc))
+                    else:
+                        break
+                # check vertically up
+                i = 0 
+                while True:
+                    i = i-1
+                    if (r+i,c,dr,dc) in boundary_list and (r+i,c,dr,dc) not in visited:
+                        visited.add((r+i,c,dr,dc))
+                    else:
+                        break
+    return edges
+
+
+
 def part2(txt):
     ans = 0
     list_of_groups = []
@@ -243,13 +305,16 @@ def part2(txt):
             print(f"L: {list_of_lists}")
         
 
-        out.append(np.sum([get_area(l)*get_num_sides(l) for l in list_of_lists]))
+        out.append(np.sum([get_area(l)*count_edges_in_boundary_list(get_boundary_list(l)) for l in list_of_lists]))
+    return np.sum(out)
 
 print(f"Part 2 (test): {part2(test_txt)}")
 # print(f"Part 2: {part2(input_txt)}")
 # %%
 
+Print('*************************')
 
+# %%
 
 
 list1 = [1,2,3,4,7,8,9]
@@ -372,5 +437,115 @@ tmp+0.5
 # np.diff(np.fliplr(tmp),axis=1)
 
 
+
+# %%
+
+## resume here! Nov 2024
+# here's a perimeter calculation... 
+# 1. update it to store the boundary elements
+# 2. then write _another_ function to traverse the list for adjacent 
+
+def get_perimeter_explicit(l1):
+    perim = 0
+    boundary_list = []
+    for (r, c) in l1:
+        for dr, dc in dirs:
+            neighbor = (r + dr, c + dc)
+            if neighbor not in l1:
+                perim += 1
+                boundary_list.append((r,c, dr,dc))
+    return perim, boundary_list
+
+def get_boundary_list(l1):
+    perim = 0
+    boundary_list = []
+    for (r, c) in l1:
+        for dr, dc in dirs:
+            neighbor = (r + dr, c + dc)
+            if neighbor not in l1:
+                perim += 1
+                boundary_list.append((r,c, dr,dc))
+    return boundary_list
+
+def count_edges_in_boundary_list(boundary_list):
+    boundary_list = set(boundary_list)
+    visited = set()
+    edges = 0
+    for (r, c,dr,dc) in boundary_list:
+        if (r, c,dr,dc) in visited:
+            continue
+        else:
+            visited.add((r, c,dr,dc))
+            edges+=1
+            if dc == 0:   # then boundary is to the north or south     
+                # check horizontally right
+                i = 0 
+                while True:
+                    i = i+1
+                    if (r,c+i,dr,dc) in boundary_list and (r,c+i,dr,dc) not in visited:
+                        visited.add((r,c+i,dr,dc))
+                    else:
+                        break
+                # check horizontally left
+                i = 0 
+                while True:
+                    i = i-1
+                    if (r,c+i,dr,dc) in boundary_list and (r,c+i,dr,dc) not in visited:
+                        visited.add((r,c+i,dr,dc))
+                    else:
+                        break
+            else:
+                 # check vertically down
+                i = 0 
+                while True:
+                    i = i+1
+                    if (r+i,c,dr,dc) in boundary_list and (r+i,c,dr,dc) not in visited:
+                        visited.add((r+i,c,dr,dc))
+                    else:
+                        break
+                # check vertically up
+                i = 0 
+                while True:
+                    i = i-1
+                    if (r+i,c,dr,dc) in boundary_list and (r+i,c,dr,dc) not in visited:
+                        visited.add((r+i,c,dr,dc))
+                    else:
+                        break
+    return edges
+
+
+# %%
+tmp = []
+for l in """EEEEE
+EXXXX
+EEEEE
+EXXXX
+EEEEE""".splitlines():
+    tmp.append([1 if t == 'E' else 0 for t in l])
+tmp = np.array(tmp)
+
+map_ = np.array(tmp)
+R,C = map_.shape
+
+u_vals = np.unique(map_)
+
+out =[]
+
+for u in tqdm(u_vals):
+    inds_tmp = np.where(map_==u)
+    inds = list(zip(*inds_tmp))
+
+    list_of_lists = split_into_list_of_contiguous_lists(inds)
+
+    # for l in list_of_lists:
+    #     bl = get_boundary_list(l);  
+    #     print((bl))
+    #     ed = count_edges_in_boundary_list(bl)
+    #     print(ed)
+
+
+    out.append(np.sum([get_area(l)*count_edges_in_boundary_list(get_boundary_list(l)) for l in list_of_lists]))
+
+print(np.sum(out))
 
 # %%
